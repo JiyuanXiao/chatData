@@ -2,4 +2,4 @@ lida
 lida[transformers]
 torch
 streamlit
-python-ditenv
+python-dotenv
