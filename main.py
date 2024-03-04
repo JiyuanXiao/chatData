@@ -33,46 +33,38 @@ def base64_to_image(base64_string):
 
 lida = Manager(text_gen=llm("openai"))
 
-textgen_config = TextGenerationConfig(n=1, temperature=0.5, model="gpt-3.5-turbo", use_cache=True)
+textgen_config = TextGenerationConfig(n=1, temperature=0.5, model="gpt-3.5-turbo", use_cache=False)
 
-menu = st.sidebar.selectbox("Choose an option", ["Summarize", "Question based Graph"])
+menu = st.sidebar.selectbox("Choose an option", ["Visualize Your Data", "Ask Your Data"])
 
-if menu == "Summarize":
-    st.subheader("Summarization of your Dara")
+if menu == "Visualize Your Data":
+    st.subheader("Visualize Your Data")
     file_uploader = st.file_uploader("Upload your CSV file", type="csv")
+
     if file_uploader is not None:
-        path_to_save = "filename.csv"
-        with open(path_to_save, "wb")as f:
+        data_filename = "data.csv"
+        with open(data_filename, "wb")as f:
             f.write(file_uploader.getvalue())
-        summary = lida.summarize("filename.csv", summary_method="default", textgen_config=textgen_config)
-        st.write(summary)
-        goals = lida.goals(summary, n=2, textgen_config=textgen_config)
+        summary = lida.summarize(data_filename, summary_method="default", textgen_config=textgen_config)
+        #st.write(summary)
+        goals = lida.goals(summary, n=5, textgen_config=textgen_config)
         for goal in goals:
             st.write(goal)
-        i = 0
-        library = "seaborn"
-        textgen_config = TextGenerationConfig(n=1, temperature=0.2, use_cache=True)
-        charts = lida.visualize(summary=summary, goal=goals[i], textgen_config=textgen_config, library=library)
-        img_base64_string = charts[0].raster
-        img = base64_to_image(img_base64_string)
-        st.image(img) 
 
-elif menu == "Question based Graph":
-    st.subheader("Ask your data to generate Graph")
-    file_uploader = st.file_uploader("Upload your CSV file", type="csv")
-    if file_uploader is not None:
-        path_to_save = "filename1.csv"
-        with open(path_to_save, "wb")as f:
-            f.write(file_uploader.getvalue())
-
-        user_query = st.text_area("Ask your data to generate Graph", height=200)
-        if st.button("Generate Graph"):
-            if len(user_query) > 0:
-                st.info("Your query: " + user_query)
-                lida = Manager(text_gen=llm("openai"))
-                textgen_config = TextGenerationConfig(n=1, temperature=0.2, use_cache=True)
-                summary = lida.summarize("filename1.csv", summary_method="default", textgen_config=textgen_config)
-                charts = lida.visualize(summary=summary, goal=user_query, textgen_config=textgen_config)
+    user_query = st.text_area("Ask your data to generate Graph", height=200)
+    if st.button("Generate Graph"):
+        if len(user_query) > 0:
+            st.info("Your query: " + user_query)
+            #lida = Manager(text_gen=llm("openai"))
+            #textgen_config = TextGenerationConfig(n=1, temperature=0, use_cache=False)
+            summary = lida.summarize("data.csv", summary_method="default", textgen_config=textgen_config)
+            charts = lida.visualize(summary, goal=user_query, textgen_config=textgen_config)
+            if len(charts)>0:
                 img_base64 = charts[0].raster
                 img = base64_to_image(img_base64)
-                st.image(img)                
+                st.image(img) 
+            else:
+                st.warning("Fail to Resolve your Query")
+
+elif menu == "Ask Your Data":
+    st.info("Coming Soon")               
