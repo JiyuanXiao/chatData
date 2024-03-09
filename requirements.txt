@@ -1,5 +1,12 @@
 lida
 lida[transformers]
 torch
+langchain
+langchain_openai
+langchain_experimental
+openai
 streamlit
 python-dotenv
+tabulate
+chardet
+openpyxl
