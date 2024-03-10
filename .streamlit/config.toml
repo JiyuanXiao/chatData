@@ -1,0 +1,28 @@
+# Configurations for the Streamlit app
+
+[server]
+# The port to listen on. Default is 8501.
+port = 8501
+# Enable CORS protection. Default is true.
+enableCORS = false
+# The address to bind the server to. Default is 'localhost'.
+address = "0.0.0.0"
+
+[browser]
+# Whether to open a browser automatically when launching Streamlit. Default is true.
+serverAddress = "localhost"
+gatherUsageStats = false
+
+[theme]
+# The visual theme of the app (light or dark)
+base="dark"
+# Primary color for interactive elements
+primaryColor="#F63366"
+# Background color for the main content area
+backgroundColor="#1E1E1E"
+# Background color for sidebar and most interactive widgets
+secondaryBackgroundColor="#31333F"
+# Color used for almost all text
+textColor="#FAFAFA"
+# Font family for all text in the app, except code blocks
+font="sans serif"
