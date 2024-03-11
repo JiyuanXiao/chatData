@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 from lida import Manager, TextGenerationConfig, llm
-import modules.utils.csv_agent as csv_agent
-import modules.utils.extract_code_from_response as extract_code_from_response
-import modules.utils.get_csv_encoding as get_csv_encoding
+import utils.csv_agent as csv_agent
+import utils.extract_code_from_response as extract_code_from_response
+import utils.get_csv_encoding as get_csv_encoding
 
 
 lida = Manager(text_gen=llm("openai"))
