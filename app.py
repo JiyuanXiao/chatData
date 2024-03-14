@@ -8,7 +8,9 @@ def main():
 
     file_type = st.sidebar.selectbox("Choose a file type", ["csv", "xlsx"])
 
-    data_analyzer(file_type)
+    suggestions_num = st.sidebar.slider("Select the number of suggestion", 0, 10, 3)
+
+    data_analyzer(file_type, suggestions_num)
 
     st.divider()
 
