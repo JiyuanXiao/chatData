@@ -8,10 +8,12 @@ from dotenv import load_dotenv
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY, base_url="https://dataana.top/v1")
+
 
 def csv_agent(file_path, user_message):
     csv_agent = create_csv_agent(
-        ChatOpenAI(temperature=0, model="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY),
+        llm,
         file_path,
         agent_type=AgentType.OPENAI_FUNCTIONS,
         )

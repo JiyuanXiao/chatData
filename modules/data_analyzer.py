@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from lida import Manager, TextGenerationConfig, llm
+import openai
+from lida import Manager, TextGenerationConfig, llm, TextGenerator
 import utils.csv_cleaner as csv_cleaner
 import utils.csv_agent as csv_agent
 import utils.extract_code_from_response as extract_code_from_response
@@ -11,11 +12,10 @@ from utils.constants import FILE_TYPE, FILE_ID, FILE_INFO, FILE_PATH, FILE_PATH_
 from utils.constants import SUGGESTION_NUM, SUGGESTIONS, REFRESH
 from utils.constants import ORIGINAL_DF, CLEANED_DF, CLEANNING_DETAIL
 
-
 lida = Manager(text_gen=llm("openai"))
 
 textgen_config = TextGenerationConfig(n=1, temperature=0.5, model="gpt-3.5-turbo", use_cache=False)
-
+    
 
 def data_analyzer(session_state):
     
@@ -100,20 +100,24 @@ def data_analyzer(session_state):
 
             # Generate suggestion queries
             if suggestion_num > 0:
-                st.subheader("Suggestions")
-                if SUGGESTIONS not in session_state:
-                    summary = lida.summarize(session_state[FILE_PATH_CLEAN], summary_method="default", textgen_config=textgen_config)
-                    session_state[SUGGESTIONS] = lida.goals(summary, n=suggestion_num, textgen_config=textgen_config)
-                n = 1
-                for suggestion in session_state[SUGGESTIONS]:
-                    suggestion_dict = {
-                        "Suggestion#": n,
-                        "Question": suggestion.question,
-                        "Reason": suggestion.rationale,
-                        "Visualization Suggestion": suggestion.visualization
-                    }
-                    st.write(suggestion_dict)
-                    n += 1
+                try:
+                    st.subheader("Suggestions")
+                    if SUGGESTIONS not in session_state:
+                        summary = lida.summarize(session_state[FILE_PATH_CLEAN], summary_method="default", textgen_config=textgen_config)
+                        session_state[SUGGESTIONS] = lida.goals(summary, n=suggestion_num, textgen_config=textgen_config)
+                except Exception as e:
+                    st.warning(f"Feature Temporarily Unavariable")
+                else:
+                    n = 1
+                    for suggestion in session_state[SUGGESTIONS]:
+                        suggestion_dict = {
+                            "Suggestion#": n,
+                            "Question": suggestion.question,
+                            "Reason": suggestion.rationale,
+                            "Visualization Suggestion": suggestion.visualization
+                        }
+                        st.write(suggestion_dict)
+                        n += 1
         
         with reight_col:
             st.subheader("Your Query")
