@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import openai
 from lida import Manager, TextGenerationConfig, llm, TextGenerator
 import utils.csv_cleaner as csv_cleaner
 import utils.csv_agent as csv_agent
@@ -60,7 +59,7 @@ def data_analyzer(session_state):
                 if ORIGINAL_DF not in session_state:
                     encoding = get_csv_encoding(session_state[FILE_PATH])
                     session_state[ORIGINAL_DF] = pd.read_csv(session_state[FILE_PATH], encoding=encoding)
-                st.subheader("Original Content")
+                st.subheader("Original Data")
                 st.dataframe(session_state[ORIGINAL_DF])
 
                 # Clean data
@@ -71,15 +70,19 @@ def data_analyzer(session_state):
                     # Display the content of cleaned CSV
                     encoding = get_csv_encoding(session_state[FILE_PATH_CLEAN])
                     session_state[CLEANED_DF] = pd.read_csv(session_state[FILE_PATH_CLEAN], encoding=encoding)
-                st.subheader("Cleaned Content")
+                st.subheader("Cleaned Data")
                 st.dataframe(session_state[CLEANED_DF])
+
+                if CLEANNING_DETAIL in session_state:
+                    st.subheader("Data Cleanning Detail")
+                    st.write(session_state[CLEANNING_DETAIL])
 
             # Handling Excel file
             elif data_file_type == 'xlsx':
                 # Display the content of Excel
                 if ORIGINAL_DF not in session_state:
                     session_state[ORIGINAL_DF] = pd.read_excel(session_state[FILE_PATH])
-                st.subheader("Original Content")
+                st.subheader("Original Data")
                 st.dataframe(session_state[ORIGINAL_DF])
 
                 # Convert Excel to CSV and save the CSV file to disk
@@ -95,8 +98,12 @@ def data_analyzer(session_state):
                     # Display the content of cleaned CSV
                     encoding = get_csv_encoding(session_state[FILE_PATH_CLEAN])
                     session_state[CLEANED_DF] = pd.read_csv(session_state[FILE_PATH_CLEAN], encoding=encoding)
-                st.subheader("Cleaned Content")
+                st.subheader("Cleaned Data")
                 st.dataframe(session_state[CLEANED_DF])
+
+                if CLEANNING_DETAIL in session_state:
+                    st.subheader("Data Cleanning Detail")
+                    st.write(session_state[CLEANNING_DETAIL])
 
             # Generate suggestion queries
             if suggestion_num > 0:
@@ -106,7 +113,7 @@ def data_analyzer(session_state):
                         summary = lida.summarize(session_state[FILE_PATH_CLEAN], summary_method="default", textgen_config=textgen_config)
                         session_state[SUGGESTIONS] = lida.goals(summary, n=suggestion_num, textgen_config=textgen_config)
                 except Exception as e:
-                    st.warning(f"Feature Temporarily Unavariable")
+                    st.warning(f"Error: {e}")
                 else:
                     n = 1
                     for suggestion in session_state[SUGGESTIONS]:

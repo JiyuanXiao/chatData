@@ -30,16 +30,12 @@ def csv_cleaner(session_state):
 
     data_cleanning_prompt += cleaned_file_path
 
-    print(data_cleanning_prompt)
-
     if CLEANNING_DETAIL not in session_state:
         session_state[CLEANNING_DETAIL] = csv_agent(file_path, data_cleanning_prompt)
 
     cleanning_code = extract_code_from_response(session_state[CLEANNING_DETAIL])
 
-    st.subheader("Data Cleanning")
     if cleanning_code:
-        st.write(session_state[CLEANNING_DETAIL])
         encoding = get_csv_encoding(file_path)
         df = pd.read_csv(file_path, encoding=encoding)
         exec(cleanning_code, globals(), {"df": df})
