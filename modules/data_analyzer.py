@@ -128,7 +128,18 @@ def data_analyzer(session_state):
         
         with reight_col:
             st.subheader("Your Query")
+            query_type = st.radio("What type of answer you want:", ["plain text answer", "visualization"])
             user_input = st.text_area("", height=100)
+            if query_type == 'visualization':
+                visualize_prompt_header = "Please generate python script to visualize the statement or question below: \n\n```\n"
+                visualize_prompt_tailer = "\n```\n\n You MUST generate PYTHON SCRIPT in your answer. Please use the EXACTLY SAME PROPERTY NAMES as the datasets' in the script."
+                user_input = visualize_prompt_header + user_input
+                user_input = user_input + visualize_prompt_tailer
+            elif query_type == "plain text answer":
+                visualize_prompt_header = "Please generate plain text content to demonstrate the statment or answer the question below. Here is the question: \n\n```\n"
+                visualize_prompt_tailer = "\n```\n\n You MUST generate the PLAIN TEXT answer based on the dataset. Just tell the reason if the dataset doesn't have enought information to derive an accurate demonstration or answer. Plase don't makeup an answer if you can't derive an accurate answer. You MUST generate the answer IN THE SAME LANGUAGE AS THE QUESTION."
+                user_input = visualize_prompt_header + user_input
+                user_input = user_input + visualize_prompt_tailer
             if st.button("Submit"):
                 response = csv_agent(session_state[FILE_PATH_CLEAN], user_input)
                 
@@ -138,10 +149,11 @@ def data_analyzer(session_state):
                 if code_to_execute:
                     try:
                         # Standardize the symbol used in headers (use "_")
-                        session_state[CLEANED_DF].columns = session_state[CLEANED_DF].columns.str.replace('.', '_').str.replace('-', '_').str.replace(' ', '_')
+                        #session_state[CLEANED_DF].columns = session_state[CLEANED_DF].columns.str.replace('.', '_').str.replace('-', '_').str.replace(' ', '_')
 
                         # Making df available for execution in the context
-                        exec(code_to_execute, globals(), {"df": session_state[CLEANED_DF], "plt": plt})
+                        df_copy = session_state[CLEANED_DF].copy()
+                        exec(code_to_execute, globals(), {"df": df_copy, "plt": plt})
 
                         # Display visualization
                         fig = plt.gcf()  # Get current figure
@@ -154,6 +166,7 @@ def data_analyzer(session_state):
 
                     except Exception as e:
                         st.write(f"Error executing code: {e}")
+                        st.write(response)
                 else:
                     # display the answer of user query
                     st.subheader("Detail Answer")

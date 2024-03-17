@@ -5,7 +5,7 @@ from utils.constants import SUGGESTION_NUM, FILE_TYPE, REFRESH, SUGGESTIONS
 
 def main():
     st.set_page_config(layout="wide")
-    st.title('Chat with Data')
+    st.title('Chat with Your Data')
 
     session_state = st.session_state
 
