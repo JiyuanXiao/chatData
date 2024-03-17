@@ -4,7 +4,8 @@ import streamlit as st
 import utils.csv_agent as csv_agent
 import utils.get_csv_encoding as get_csv_encoding
 import utils.extract_code_from_response as extract_code_from_response
-from utils.constants import FILE_PATH, CLEANNING_DETAIL
+import utils.constants as constants
+
 
 DATA_CLEANNING_PROMPT_HEADER = "Data cleaning steps will be specified below: "
 DTAT_CLEANNING_PROMPT_REQUIREMENTS =[ "1. rename all column property so that it repersents the meaning of the data",
@@ -15,7 +16,7 @@ DATA_CLEANNING_PROMPT_ORIGIN_FILE = "The original file is "
 DATA_CLEANNING_PROMPT_CLEANED_FILE = 'Save the cleaned data to: '
 
 def csv_cleaner(session_state):
-    file_path = session_state[FILE_PATH]
+    file_path = session_state[constants.FILE_PATH]
     data_cleanning_prompt = DATA_CLEANNING_PROMPT_HEADER
     for requirment in DTAT_CLEANNING_PROMPT_REQUIREMENTS:
         data_cleanning_prompt += requirment
@@ -30,10 +31,10 @@ def csv_cleaner(session_state):
 
     data_cleanning_prompt += cleaned_file_path
 
-    if CLEANNING_DETAIL not in session_state:
-        session_state[CLEANNING_DETAIL] = csv_agent(file_path, data_cleanning_prompt)
+    if constants.CLEANNING_DETAIL not in session_state:
+        session_state[constants.CLEANNING_DETAIL] = csv_agent(file_path, data_cleanning_prompt)
 
-    cleanning_code = extract_code_from_response(session_state[CLEANNING_DETAIL])
+    cleanning_code = extract_code_from_response(session_state[constants.CLEANNING_DETAIL])
 
     if cleanning_code:
         encoding = get_csv_encoding(file_path)
