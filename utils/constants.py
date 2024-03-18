@@ -9,3 +9,4 @@ FILE_PATH_CLEAN = 'file_path_clean'
 ORIGINAL_DF = "original_df"
 CLEANED_DF = "cleaned_df"
 CLEANNING_DETAIL = 'cleanning_detail'
+LANGUAGE = 'language'

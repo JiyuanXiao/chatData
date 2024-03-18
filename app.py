@@ -1,18 +1,22 @@
 import streamlit as st
 import modules.data_analyzer as data_analyzer
 import utils.constants as constants
+import utils.texts as texts
                     
 
 def main():
     st.set_page_config(layout="wide")
-    st.title('Chat with Your Data')
 
     session_state = st.session_state
+
+    language = st.sidebar.selectbox("Choose a language", ["English", "简体中文"])
+
+    st.title(texts.title[language])
 
     # Indicator for cache clearing
     session_state[constants.REFRESH] = False
 
-    file_type = st.sidebar.radio("Choose a file type", ["xlsx", "csv"])
+    file_type = st.sidebar.radio(texts.prompt_file_type[language], ["xlsx", "csv"])
 
     # If change file type, reload all the sections
     if constants.FILE_TYPE not in session_state or session_state[constants.FILE_TYPE] != file_type:
@@ -34,7 +38,7 @@ def main():
         session_state[constants.FILE_TYPE] = file_type
         session_state[constants.SUGGESTION_NUM] = suggestions_num
 
-    data_analyzer(session_state)
+    data_analyzer(session_state, language)
 
     st.divider()
 
